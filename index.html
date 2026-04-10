@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BTD | Official Value List</title>
+    <style>
+        :root {
+            --bg: #0b0e14;
+            --card-bg: #161b22;
+            --border: #30363d;
+            --text: #ffffff;
+            --omega: #4b0082;
+            --overlay-bg: rgba(0, 0, 0, 0.92);
+            --status-drop: #ff4747;
+            --status-gain: #00ff88;
+            --status-stable: #5ea6ff;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 10px;
+            user-select: none;
+            -webkit-touch-callout: none;
+            overflow-x: hidden;
+        }
+
+        header { text-align: center; padding: 15px 0; }
+        h1 { font-size: 1.4rem; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+        .official-badge { background: #d4af37; color: black; padding: 3px 10px; border-radius: 20px; font-weight: bold; font-size: 9px; margin-bottom: 5px; display: inline-block; }
+
+        .controls { display: flex; justify-content: center; margin-bottom: 15px; }
+        .sort-select { background: var(--card-bg); color: white; border: 1px solid var(--border); padding: 8px; border-radius: 8px; font-size: 11px; width: 85%; }
+
+        .tabs-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; }
+        .tab-btn { padding: 8px 12px; cursor: pointer; border: 1px solid var(--border); background: var(--card-bg); color: white; font-weight: bold; border-radius: 6px; font-size: 10px; text-transform: uppercase; }
+        .tab-btn.active { border-color: white; background: var(--omega); }
+
+        .value-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 10px; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+        
+        .unit-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            padding: 12px; 
+            border-radius: 10px; 
+            border-left: 4px solid var(--omega);
+            position: relative;
+        }
+
+        .unit-info b { font-size: 0.85rem; margin-bottom: 5px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .unit-value { display: flex; align-items: center; gap: 4px; }
+        .value-num { color: #a855f7; font-weight: bold; font-size: 0.9rem; font-family: monospace; }
+        .gem-icon { width: 14px; height: auto; }
+
+        /* --- SCREEN-FIT MODAL --- */
+        #detailsModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--overlay-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s ease;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        #detailsModal.active { opacity: 1; visibility: visible; }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            width: 100%;
+            max-width: 280px;
+            max-height: 85vh;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.8);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #detailsModal.active .modal-content { transform: scale(1); }
+
+        .portrait-container {
+            width: 100%;
+            height: 160px;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-portrait {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-text-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .modal-text-container h2 { font-size: 1.3rem; margin: 0 0 10px 0; color: var(--omega); text-transform: uppercase; }
+        .modal-line { font-size: 1rem; margin: 8px 0; font-weight: 500; }
+        
+        .status-red { color: var(--status-drop); font-weight: bold; }
+        .status-green { color: var(--status-gain); font-weight: bold; }
+        .status-blue { color: var(--status-stable); font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="official-badge">OFFICIAL VALUE LIST 🥀</div>
+        <h1>BTD VALUES</h1>
+    </header>
+
+    <div class="controls">
+        <select class="sort-select" id="sortMenu" onchange="sortUnits()">
+            <option value="default">Sort By: Default</option>
+            <option value="val-high">Value: High to Low</option>
+            <option value="dem-high">Demand: High to Low</option>
+        </select>
+    </div>
+
+    <div class="tabs-container">
+        <button class="tab-btn active">Omega</button>
+        <button class="tab-btn">Transcendent</button>
+    </div>
+
+    <div id="unitContainer" class="value-grid">
+        <div class="unit-card" data-val="18000000" data-dem="6.7" data-status="Stable" 
+             data-portrait="https://discord.com/channels/1279494977906413628/1307546516277428285/1491976942084161546"
+             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
+            <div class="unit-info"><b>Nightmare Ball</b></div>
+            <div class="unit-value"><span class="value-num">17.5M-18.5M</span></div>
+        </div>
+
+        <div class="unit-card" data-val="8750000" data-dem="7" data-status="Stable" 
+             data-portrait="https://cdn.discordapp.com/attachments/1482411412620972153/1491972464652324996/Screenshot_20260409-2116442.png?ex=69d9a323&is=69d851a3&hm=5c0935107043110f416c88cf64c43573c056e09ae8ddb507c49b01b05e17161e&"
+             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
+            <div class="unit-info"><b>Overclock Overlord</b></div>
+            <div class="unit-value"><span class="value-num">8M-9.5M</span></div>
+        </div>
+
+        <div class="unit-card" data-val="10000000" data-dem="-1" data-status="Avoid" 
+             data-portrait="https://cdn.discordapp.com/attachments/1423823401558081659/1491977691899891866/Screenshot_20260409-2140142.png?ex=69d9a801&is=69d85681&hm=858a7ec3d70347321d3a6d5d8d9658c11bdc63bf7afcbbaaefe65d5e9ac8a8f0&"
+             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
+            <div class="unit-info"><b>Temple Ball</b></div>
+            <div class="unit-value"><span class="value-num">10M</span></div>
+        </div>
+
+        <div class="unit-card" data-val="4300000" data-dem="4" data-status="Average" 
+             data-portrait="https://cdn.discordapp.com/attachments/1482411412620972153/1491972454820741140/Screenshot_20260409-2116445.png?ex=69d9a320&is=69d851a0&hm=84d06fd5b55734f5e9dab70d99a11c63a65e751db188fa099ef3dd61e783ba08&"
+             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
+            <div class="unit-info"><b>Golem Ball</b></div>
+            <div class="unit-value"><span class="value-num">4.3M</span></div>
+        </div>
+
+        <div class="unit-card" data-val="2900000" data-dem="7" data-status="Decent" onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
+            <div class="unit-info"><b>The Frozen One</b></div>
+            <div class="unit-value"><span class="value-num">2.8M-3M</span></div>
+        </div>
+
+        <div class="unit-card" data-val="2900000" data-dem="3" data-status="Dropping" 
+             data-portrait="https://cdn.discordapp.com/attachments/1482411412620972153/1491972461548408853/Screenshot_20260409-2116443.png?ex=69d9a322&is=69d851a2&hm=a424a57a8ecf12bce404c6e3f3bf311419c47089464901227ee72eff62f3a3fd&"
+             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
+            <div class="unit-info"><b>Forest Ball</b></div>
+            <div class="unit-value"><span class="value-num">2.9M</span></div>
+        </div>
+
+        <div class="unit-card" data-val="2400000" data-dem="5" data-status="Dropping" 
+             data-portrait="https://cdn.discordapp.com/attachments/1491969429377122454/1491977159588315156/image.png?ex=69d9a782&is=69d85602&hm=0fe8a73df5422a9da4dc0ff59cd0800e11be8b06679b91d9683c0f3e510b82ec&"
+             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
+            <div class="unit-info"><b>Omega Knight</b></div>
+            <div class="unit-value"><span class="value-num">2.4M</span></div>
+        </div>
+
+        <div class="unit-card" data-val="1900000" data-dem="8" data-status="High DPS" onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
+            <div class="unit-info"><b>Void Ball</b></div>
+            <div class="unit-value"><span class="value-num">1.9M</span></div>
+        </div>
+
+        <div class="unit-card" data-val="1550000" data-dem="8" data-status="Worth Buying" 
+             data-portrait="https://cdn.discordapp.com/attachments/1491969429377122454/1491972292128018623/image.png?ex=69d9a2f9&is=69d85179&hm=9f2498c10fafd6b17029e0f232dcaf986f5af41624175b278fdbae838e4002b9&"
+             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
+            <div class="unit-info"><b>Mecha Ball</b></div>
+            <div class="unit-value"><span class="value-num">1.5M-1.6M</span></div>
+        </div>
+    </div>
+
+    <div id="detailsModal">
+        <div class="modal-content">
+            <div class="portrait-container">
+                <img src="" id="modalPortrait" class="modal-portrait">
+            </div>
+            <div class="modal-text-container">
+                <h2 id="modalName">---</h2>
+                <div class="modal-line">Value: <span class="value-num" id="modalValue">---</span></div>
+                <div class="modal-line" id="modalDemand">Demand: 0/10</div>
+                <div class="modal-line" id="modalStatus">---</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gemIcon = 'https://cdn.discordapp.com/attachments/1423823401558081659/1491958452149555391/767e7d9e-c06a-4caa-8592-c702eec2a426_removalai_preview.png?ex=69d99616&is=69d84496&hm=193ec12aab6ded4be2713cc23256542097967adc391d748984eaea50a8ed9ac1&'; 
+
+        const modal = document.getElementById('detailsModal');
+        const modalPortrait = document.getElementById('modalPortrait');
+        const modalName = document.getElementById('modalName');
+        const modalValue = document.getElementById('modalValue');
+        const modalDemand = document.getElementById('modalDemand');
+        const modalStatus = document.getElementById('modalStatus');
+
+        function setupIcons() {
+            document.querySelectorAll('.unit-value').forEach(container => {
+                if(!container.querySelector('.gem-icon')) {
+                    const iconEl = document.createElement('img');
+                    iconEl.src = gemIcon;
+                    iconEl.classList.add('gem-icon');
+                    container.insertBefore(iconEl, container.firstChild);
+                }
+            });
+        }
+        setupIcons();
+
+        function sortUnits() {
+            const container = document.getElementById('unitContainer');
+            const units = Array.from(container.getElementsByClassName('unit-card'));
+            const sortBy = document.getElementById('sortMenu').value;
+            units.sort((a, b) => {
+                if (sortBy === 'val-high') return b.dataset.val - a.dataset.val;
+                if (sortBy === 'dem-high') return b.dataset.dem - a.dataset.dem;
+                return 0;
+            });
+            container.innerHTML = "";
+            units.forEach(u => container.appendChild(u));
+        }
+
+        let holdTimer;
+        function startHold(el) {
+            modalName.innerText = el.querySelector('b').innerText;
+            modalValue.innerText = el.querySelector('.value-num').innerText;
+            modalDemand.innerText = `Demand: ${el.dataset.dem}/10`;
+            
+            // Note: Nightmare Ball is a channel link, it won't render in HTML as an image
+            modalPortrait.src = el.dataset.portrait || gemIcon;
+
+            const status = el.dataset.status;
+            modalStatus.innerText = status;
+            modalStatus.className = 'modal-line';
+            if (status === 'Stable' || status === 'Decent') modalStatus.classList.add('status-blue');
+            else if (status.includes('Buying')) modalStatus.classList.add('status-green');
+            else if (status === 'Dropping' || status === 'Avoid') modalStatus.classList.add('status-red');
+
+            holdTimer = setTimeout(() => { modal.classList.add('active'); }, 200); 
+        }
+
+        function endHold() { clearTimeout(holdTimer); modal.classList.remove('active'); }
+    </script>
+</body>
+  </html>
