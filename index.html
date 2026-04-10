@@ -1,280 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BTD | Official Value List</title>
-    <style>
-        :root {
-            --bg: #0b0e14;
-            --card-bg: #161b22;
-            --border: #30363d;
-            --text: #ffffff;
-            --omega: #4b0082;
-            --overlay-bg: rgba(0, 0, 0, 0.92);
-            --status-drop: #ff4747;
-            --status-gain: #00ff88;
-            --status-stable: #5ea6ff;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 10px;
-            user-select: none;
-            -webkit-touch-callout: none;
-            overflow-x: hidden;
-        }
-
-        header { text-align: center; padding: 15px 0; }
-        h1 { font-size: 1.4rem; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
-        .official-badge { background: #d4af37; color: black; padding: 3px 10px; border-radius: 20px; font-weight: bold; font-size: 9px; margin-bottom: 5px; display: inline-block; }
-
-        .controls { display: flex; justify-content: center; margin-bottom: 15px; }
-        .sort-select { background: var(--card-bg); color: white; border: 1px solid var(--border); padding: 8px; border-radius: 8px; font-size: 11px; width: 85%; }
-
-        .tabs-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; }
-        .tab-btn { padding: 8px 12px; cursor: pointer; border: 1px solid var(--border); background: var(--card-bg); color: white; font-weight: bold; border-radius: 6px; font-size: 10px; text-transform: uppercase; }
-        .tab-btn.active { border-color: white; background: var(--omega); }
-
-        .value-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 10px; 
-            max-width: 1000px; 
-            margin: 0 auto; 
-        }
-        
-        .unit-card { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border); 
-            padding: 12px; 
-            border-radius: 10px; 
-            border-left: 4px solid var(--omega);
-            position: relative;
-        }
-
-        .unit-info b { font-size: 0.85rem; margin-bottom: 5px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .unit-value { display: flex; align-items: center; gap: 4px; }
-        .value-num { color: #a855f7; font-weight: bold; font-size: 0.9rem; font-family: monospace; }
-        .gem-icon { width: 14px; height: auto; }
-
-        /* --- SCREEN-FIT MODAL --- */
-        #detailsModal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--overlay-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.3s ease;
-            padding: 15px;
-            box-sizing: border-box;
-        }
-
-        #detailsModal.active { opacity: 1; visibility: visible; }
-
-        .modal-content {
-            background: var(--card-bg);
-            border: 2px solid var(--border);
-            width: 100%;
-            max-width: 280px;
-            max-height: 85vh;
-            border-radius: 20px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transform: scale(0.8);
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        #detailsModal.active .modal-content { transform: scale(1); }
-
-        .portrait-container {
-            width: 100%;
-            height: 160px;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .modal-portrait {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .modal-text-container {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .modal-text-container h2 { font-size: 1.3rem; margin: 0 0 10px 0; color: var(--omega); text-transform: uppercase; }
-        .modal-line { font-size: 1rem; margin: 8px 0; font-weight: 500; }
-        
-        .status-red { color: var(--status-drop); font-weight: bold; }
-        .status-green { color: var(--status-gain); font-weight: bold; }
-        .status-blue { color: var(--status-stable); font-weight: bold; }
-
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="official-badge">OFFICIAL VALUE LIST 🥀</div>
-        <h1>BTD VALUES</h1>
-    </header>
-
-    <div class="controls">
-        <select class="sort-select" id="sortMenu" onchange="sortUnits()">
-            <option value="default">Sort By: Default</option>
-            <option value="val-high">Value: High to Low</option>
-            <option value="dem-high">Demand: High to Low</option>
-        </select>
-    </div>
-
-    <div class="tabs-container">
-        <button class="tab-btn active">Omega</button>
-        <button class="tab-btn">Transcendent</button>
-    </div>
-
-    <div id="unitContainer" class="value-grid">
-        <div class="unit-card" data-val="18000000" data-dem="6.7" data-status="Stable" 
-             data-portrait="https://discord.com/channels/1279494977906413628/1307546516277428285/1491976942084161546"
-             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
-            <div class="unit-info"><b>Nightmare Ball</b></div>
-            <div class="unit-value"><span class="value-num">17.5M-18.5M</span></div>
-        </div>
-
-        <div class="unit-card" data-val="8750000" data-dem="7" data-status="Stable" 
-             data-portrait="https://cdn.discordapp.com/attachments/1482411412620972153/1491972464652324996/Screenshot_20260409-2116442.png?ex=69d9a323&is=69d851a3&hm=5c0935107043110f416c88cf64c43573c056e09ae8ddb507c49b01b05e17161e&"
-             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
-            <div class="unit-info"><b>Overclock Overlord</b></div>
-            <div class="unit-value"><span class="value-num">8M-9.5M</span></div>
-        </div>
-
-        <div class="unit-card" data-val="10000000" data-dem="-1" data-status="Avoid" 
-             data-portrait="https://cdn.discordapp.com/attachments/1423823401558081659/1491977691899891866/Screenshot_20260409-2140142.png?ex=69d9a801&is=69d85681&hm=858a7ec3d70347321d3a6d5d8d9658c11bdc63bf7afcbbaaefe65d5e9ac8a8f0&"
-             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
-            <div class="unit-info"><b>Temple Ball</b></div>
-            <div class="unit-value"><span class="value-num">10M</span></div>
-        </div>
-
-        <div class="unit-card" data-val="4300000" data-dem="4" data-status="Average" 
-             data-portrait="https://cdn.discordapp.com/attachments/1482411412620972153/1491972454820741140/Screenshot_20260409-2116445.png?ex=69d9a320&is=69d851a0&hm=84d06fd5b55734f5e9dab70d99a11c63a65e751db188fa099ef3dd61e783ba08&"
-             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
-            <div class="unit-info"><b>Golem Ball</b></div>
-            <div class="unit-value"><span class="value-num">4.3M</span></div>
-        </div>
-
-        <div class="unit-card" data-val="2900000" data-dem="7" data-status="Decent" onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
-            <div class="unit-info"><b>The Frozen One</b></div>
-            <div class="unit-value"><span class="value-num">2.8M-3M</span></div>
-        </div>
-
-        <div class="unit-card" data-val="2900000" data-dem="3" data-status="Dropping" 
-             data-portrait="https://cdn.discordapp.com/attachments/1482411412620972153/1491972461548408853/Screenshot_20260409-2116443.png?ex=69d9a322&is=69d851a2&hm=a424a57a8ecf12bce404c6e3f3bf311419c47089464901227ee72eff62f3a3fd&"
-             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
-            <div class="unit-info"><b>Forest Ball</b></div>
-            <div class="unit-value"><span class="value-num">2.9M</span></div>
-        </div>
-
-        <div class="unit-card" data-val="2400000" data-dem="5" data-status="Dropping" 
-             data-portrait="https://cdn.discordapp.com/attachments/1491969429377122454/1491977159588315156/image.png?ex=69d9a782&is=69d85602&hm=0fe8a73df5422a9da4dc0ff59cd0800e11be8b06679b91d9683c0f3e510b82ec&"
-             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
-            <div class="unit-info"><b>Omega Knight</b></div>
-            <div class="unit-value"><span class="value-num">2.4M</span></div>
-        </div>
-
-        <div class="unit-card" data-val="1900000" data-dem="8" data-status="High DPS" onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
-            <div class="unit-info"><b>Void Ball</b></div>
-            <div class="unit-value"><span class="value-num">1.9M</span></div>
-        </div>
-
-        <div class="unit-card" data-val="1550000" data-dem="8" data-status="Worth Buying" 
-             data-portrait="https://cdn.discordapp.com/attachments/1491969429377122454/1491972292128018623/image.png?ex=69d9a2f9&is=69d85179&hm=9f2498c10fafd6b17029e0f232dcaf986f5af41624175b278fdbae838e4002b9&"
-             onmousedown="startHold(this)" onmouseup="endHold(this)" ontouchstart="startHold(this)" ontouchend="endHold(this)">
-            <div class="unit-info"><b>Mecha Ball</b></div>
-            <div class="unit-value"><span class="value-num">1.5M-1.6M</span></div>
-        </div>
-    </div>
-
-    <div id="detailsModal">
-        <div class="modal-content">
-            <div class="portrait-container">
-                <img src="" id="modalPortrait" class="modal-portrait">
-            </div>
-            <div class="modal-text-container">
-                <h2 id="modalName">---</h2>
-                <div class="modal-line">Value: <span class="value-num" id="modalValue">---</span></div>
-                <div class="modal-line" id="modalDemand">Demand: 0/10</div>
-                <div class="modal-line" id="modalStatus">---</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const gemIcon = 'https://cdn.discordapp.com/attachments/1423823401558081659/1491958452149555391/767e7d9e-c06a-4caa-8592-c702eec2a426_removalai_preview.png?ex=69d99616&is=69d84496&hm=193ec12aab6ded4be2713cc23256542097967adc391d748984eaea50a8ed9ac1&'; 
-
-        const modal = document.getElementById('detailsModal');
-        const modalPortrait = document.getElementById('modalPortrait');
-        const modalName = document.getElementById('modalName');
-        const modalValue = document.getElementById('modalValue');
-        const modalDemand = document.getElementById('modalDemand');
-        const modalStatus = document.getElementById('modalStatus');
-
-        function setupIcons() {
-            document.querySelectorAll('.unit-value').forEach(container => {
-                if(!container.querySelector('.gem-icon')) {
-                    const iconEl = document.createElement('img');
-                    iconEl.src = gemIcon;
-                    iconEl.classList.add('gem-icon');
-                    container.insertBefore(iconEl, container.firstChild);
-                }
-            });
-        }
-        setupIcons();
-
-        function sortUnits() {
-            const container = document.getElementById('unitContainer');
-            const units = Array.from(container.getElementsByClassName('unit-card'));
-            const sortBy = document.getElementById('sortMenu').value;
-            units.sort((a, b) => {
-                if (sortBy === 'val-high') return b.dataset.val - a.dataset.val;
-                if (sortBy === 'dem-high') return b.dataset.dem - a.dataset.dem;
-                return 0;
-            });
-            container.innerHTML = "";
-            units.forEach(u => container.appendChild(u));
-        }
-
-        let holdTimer;
-        function startHold(el) {
-            modalName.innerText = el.querySelector('b').innerText;
-            modalValue.innerText = el.querySelector('.value-num').innerText;
-            modalDemand.innerText = `Demand: ${el.dataset.dem}/10`;
-            
-            // Note: Nightmare Ball is a channel link, it won't render in HTML as an image
-            modalPortrait.src = el.dataset.portrait || gemIcon;
-
-            const status = el.dataset.status;
-            modalStatus.innerText = status;
-            modalStatus.className = 'modal-line';
-            if (status === 'Stable' || status === 'Decent') modalStatus.classList.add('status-blue');
-            else if (status.includes('Buying')) modalStatus.classList.add('status-green');
-            else if (status === 'Dropping' || status === 'Avoid') modalStatus.classList.add('status-red');
-
-            holdTimer = setTimeout(() => { modal.classList.add('active'); }, 200); 
-        }
-
-        function endHold() { clearTimeout(holdTimer); modal.classList.remove('active'); }
-    </script>
-</body>
-  </html>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>BunBunchicken68's Value List</title><link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}html,body{background:#050609;color:#fff;font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden}.page{min-height:100vh;padding:10px 8px 50px;position:relative;overflow:hidden}.shine-bg{pointer-events:none;position:absolute;inset:0;z-index:0;overflow:hidden}.shine-beam{position:absolute;top:-60%;left:-30%;width:55%;height:220%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.045) 50%,transparent 60%);animation:beamSweep 5s ease-in-out infinite}.shine-beam2{position:absolute;top:-60%;left:-30%;width:35%;height:220%;background:linear-gradient(105deg,transparent 40%,rgba(180,100,255,.04) 50%,transparent 60%);animation:beamSweep 5s ease-in-out infinite 2.5s}@keyframes beamSweep{0%{left:-40%}100%{left:140%}}.grid-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(138,43,226,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(138,43,226,.04) 1px,transparent 1px);background-size:40px 40px}.content{position:relative;z-index:1;max-width:600px;margin:0 auto}.top-bar{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:6px}.shiny-label{font-family:'Syncopate',sans-serif;font-size:9px;font-weight:700;color:#ffdb58;letter-spacing:2px;text-shadow:0 0 8px rgba(255,219,88,.6),-1px -1px 0 #000,1px 1px 0 #000}.sw{position:relative;display:inline-block;width:34px;height:19px}.sw input{opacity:0;width:0;height:0}.sl{position:absolute;cursor:pointer;inset:0;background:#1a0030;border:1px solid #5a1fa0;border-radius:20px;transition:.3s}.sl:before{position:absolute;content:"";height:13px;width:13px;left:3px;bottom:2px;background:#8a2be2;border-radius:50%;transition:.3s}input:checked+.sl{background:#2d0060}input:checked+.sl:before{transform:translateX(15px);background:#ffdb58}header{text-align:center;padding:6px 0 14px}.badge{font-family:'Syncopate',sans-serif;background:linear-gradient(135deg,#5a0090,#8a2be2);color:#fff;padding:4px 12px;border-radius:4px;font-size:8px;font-weight:700;display:inline-block;margin-bottom:10px;letter-spacing:2px;border:1px solid #b060ff;text-shadow:-1px -1px 0 #000,1px 1px 0 #000}h1{font-family:'Syncopate',sans-serif;font-size:clamp(.65rem,3vw,.95rem);color:#fff;line-height:1.6;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 0 20px rgba(138,43,226,.8)}.tabs{display:flex;justify-content:center;gap:8px;margin-bottom:12px}.tab-btn{font-family:'Syncopate',sans-serif;padding:8px 18px;cursor:pointer;border:2px solid #2a0050;background:#0d0015;color:#7744aa;font-weight:700;border-radius:6px;font-size:9px;letter-spacing:1px;transition:.2s;text-shadow:-1px -1px 0 #000,1px 1px 0 #000}.tab-btn:hover{border-color:#8a2be2;color:#c080ff}.tab-btn.active{color:#fff;border-color:#8a2be2;background:linear-gradient(135deg,#1a003a,#2d0060);box-shadow:0 0 14px rgba(138,43,226,.5)}.controls{margin:0 0 12px;display:flex;gap:6px}.search-input{flex:1;background:#0a0015;border:1.5px solid #2a0050;border-radius:6px;color:#fff;padding:8px 10px;font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;transition:.2s}.search-input::placeholder{color:#5a3a7a}.search-input:focus{border-color:#8a2be2}.sort-select{background:#0a0015;border:1.5px solid #2a0050;border-radius:6px;color:#c080ff;padding:8px;font-family:'Rajdhani',sans-serif;font-size:13px;cursor:pointer;outline:none}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.unit-card{background:linear-gradient(160deg,#0d0018,#110025);border:1.5px solid #2a0050;border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;position:relative}.unit-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 50%);pointer-events:none;border-radius:10px}.unit-card:hover{transform:translateY(-4px) scale(1.03);border-color:#8a2be2;box-shadow:0 0 22px rgba(138,43,226,.55),0 8px 28px rgba(0,0,0,.6)}.unit-card:active{transform:scale(.97)}.card-img-wrap{width:100%;height:90px;overflow:hidden;position:relative;background:#0a0015;display:flex;align-items:center;justify-content:center}.card-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,rgba(13,0,24,.85));pointer-events:none}.card-img-wrap img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .3s}.unit-card:hover .card-img-wrap img{transform:scale(1.08)}.img-placeholder{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-family:'Syncopate',sans-serif;font-size:7px;color:#5a3a7a;text-align:center;padding:8px}.card-body{padding:8px 9px;border-left:4px solid #8a2be2}.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:6px}.unit-name{font-family:'Syncopate',sans-serif;font-size:7px;font-weight:700;color:#fff;line-height:1.4;flex:1;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}.status-badge{font-family:'Syncopate',sans-serif;font-size:6px;padding:2px 4px;border-radius:3px;white-space:nowrap;flex-shrink:0;text-shadow:-1px -1px 0 rgba(0,0,0,.9),1px 1px 0 rgba(0,0,0,.9)}.s-stable{background:#0d1f38;color:#60a5fa;border:1px solid #1d4ed8}.s-stableoverpaid{background:#0a2010;color:#4ade80;border:1px solid #15803d}.s-unstable{background:#220e2a;color:#e879f9;border:1px solid #a21caf}.s-decent{background:#0f1f0f;color:#86efac;border:1px solid #166534}.s-dropping{background:#2a1200;color:#fb923c;border:1px solid #c2410c}.s-worthbuying{background:#0a2010;color:#34d399;border:1px solid #059669}.s-average{background:#1a1a10;color:#fbbf24;border:1px solid #92400e}.s-unknown{background:#1a1a1a;color:#888;border:1px solid #444}.dem-label{font-family:'Syncopate',sans-serif;font-size:6px;color:#5a3a7a;margin-bottom:2px;text-shadow:-1px -1px 0 #000,1px 1px 0 #000}.dem-row{display:flex;align-items:center;gap:4px;margin-bottom:6px}.dem-track{flex:1;height:4px;background:#1a0030;border-radius:2px;overflow:hidden;border:1px solid #2a0050}.dem-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#5a00aa,#c060ff)}.dem-num{font-size:11px;font-weight:700;color:#c080ff;min-width:20px;text-align:right;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}.val-row{display:flex;align-items:center;gap:5px;background:#0a0015;padding:4px 6px;border-radius:5px;width:fit-content;border:1px solid #2a0050}.gem{width:16px;height:16px;object-fit:contain}.val-text{font-weight:700;font-size:11px;color:#fff;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 0 8px rgba(138,43,226,.6)}.empty{text-align:center;color:#3a1a5a;font-family:'Syncopate',sans-serif;font-size:9px;padding:40px 0;grid-column:1/-1}#detailsModal{position:fixed;inset:0;background:rgba(0,0,0,.93);display:none;justify-content:center;align-items:center;z-index:9999;padding:16px}.modal-box{background:linear-gradient(160deg,#0d0018,#150030);border:2px solid #8a2be2;width:min(300px,90vw);border-radius:14px;overflow:hidden;position:relative;box-shadow:0 0 40px rgba(138,43,226,.4)}.modal-shine{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.05) 0%,transparent 50%);pointer-events:none}.modal-close{position:absolute;top:10px;right:12px;background:rgba(138,43,226,.3);border:1px solid #5a1fa0;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;z-index:2}.modal-img-wrap{width:100%;height:170px;background:#000;display:flex;align-items:center;justify-content:center}.modal-img-wrap img{max-width:100%;max-height:100%;object-fit:contain}.modal-body{padding:16px;text-align:center}.modal-name{font-family:'Syncopate',sans-serif;font-size:11px;color:#fff;margin-bottom:12px;line-height:1.5;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 0 12px rgba(138,43,226,.8)}.modal-val{display:flex;align-items:center;justify-content:center;gap:8px;background:#0a0015;padding:8px 14px;border-radius:6px;margin-bottom:12px;width:fit-content;margin-left:auto;margin-right:auto;border:1px solid #2a0050}.modal-val img{width:24px;height:24px}.modal-val span{font-weight:700;font-size:16px;color:#fff;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}.modal-dem-label{font-family:'Syncopate',sans-serif;font-size:8px;color:#5a3a7a;margin-bottom:5px}.modal-dem-track{height:6px;background:#0a0015;border-radius:3px;overflow:hidden;border:1px solid #2a0050;margin-bottom:4px}.modal-dem-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#5a00aa,#c060ff)}.modal-dem-num{font-size:13px;font-weight:700;color:#c080ff;margin-bottom:10px;text-shadow:-1px -1px 0 #000,1px 1px 0 #000}@keyframes cardPop{0%{transform:scale(1)}40%{transform:translateY(-6px) scale(1.04)}100%{transform:translateY(0) scale(1)}}.pop{animation:cardPop .35s ease}@media(orientation:landscape)and(max-height:500px){.grid{grid-template-columns:repeat(4,1fr)}.card-img-wrap{height:65px}header{padding:3px 0 6px}}@media(orientation:landscape)and(min-height:500px){.grid{grid-template-columns:repeat(3,1fr)}.card-img-wrap{height:100px}}@media(min-width:580px){.grid{grid-template-columns:repeat(3,1fr)}.card-img-wrap{height:110px}}@media(max-width:340px){.card-body{padding:6px 7px}.tab-btn{padding:6px 12px}}</style></head><body>
+<div class="page"><div class="shine-bg"><div class="grid-lines"></div><div class="shine-beam"></div><div class="shine-beam2"></div></div><div class="content"><div class="top-bar"><span class="shiny-label">SHINY</span><label class="sw"><input type="checkbox" id="shinyToggle" onchange="refresh()"><span class="sl"></span></label></div><header><div class="badge">OFFICIAL VALUE LIST 🥀</div><h1>BunBunchicken68's<br>Value List</h1></header><div class="tabs"><button id="omegaTab" class="tab-btn active" onclick="setTab('omega')">Omega</button><button id="transTab" class="tab-btn" onclick="setTab('trans')">Transcendent</button></div><div class="controls"><input class="search-input" id="searchInput" type="text" placeholder="Search units..." oninput="refresh()"><select class="sort-select" id="sortSelect" onchange="refresh()"><option value="default">Default</option><option value="dem-high">Demand &#8593;</option><option value="dem-low">Demand &#8595;</option><option value="name">A &#8211; Z</option></select></div><div id="unitContainer" class="grid"></div></div></div>
+<div id="detailsModal" onclick="closeModal(event)"><div class="modal-box"><div class="modal-shine"></div><button class="modal-close" onclick="closeModalDirect()">&#x2715;</button><div class="modal-img-wrap"><img id="mImg" src="" alt="unit"></div><div class="modal-body"><div class="modal-name" id="mName"></div><div class="modal-val"><img id="mGem" src="https://i.imgur.com/zEg2dpt.png" alt="gem"><span id="mVal"></span></div><div class="modal-dem-label">DEMAND</div><div class="modal-dem-track"><div class="modal-dem-fill" id="mDemFill"></div></div><div class="modal-dem-num" id="mDemNum"></div><div id="mStatus" class="status-badge" style="display:inline-block;margin-top:4px"></div></div></div></div>
+<script>
+var GEM='https://i.imgur.com/zEg2dpt.png',currentTab='omega',AC=null;
+function getAC(){if(!AC)try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}return AC}
+function beep(f,d,v,t){try{var ac=getAC();if(!ac)return;var o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type=t||'sine';o.frequency.value=f;g.gain.setValueAtTime(v||.12,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+function playHover(){beep(440,.07,.06,'sine');setTimeout(function(){beep(660,.05,.04,'sine')},45)}
+function playClick(){beep(300,.05,.10,'square');setTimeout(function(){beep(600,.08,.08,'sine')},35)}
+function playOpen(){beep(500,.09,.10,'sine');setTimeout(function(){beep(750,.10,.08,'sine')},75);setTimeout(function(){beep(1000,.12,.07,'sine')},150)}
+function playClose(){beep(600,.05,.08,'sine');setTimeout(function(){beep(300,.08,.07,'sine')},55)}
+var units={omega:{base:[
+{name:"Nightmare Ball",val:"17.5M-18.5M",dem:6.7,status:"Stable",img:"https://i.imgur.com/khAWud4.png"},
+{name:"Overclock Overlord",val:"8M-9.5M",dem:7.0,status:"Stable",img:"https://i.imgur.com/J0no2Qj.jpeg"},
+{name:"Temple Ball",val:"10M",dem:2.0,status:"Unstable",img:"https://i.imgur.com/BbYRbYr.jpeg"},
+{name:"Golem Ball",val:"4.3M",dem:4.0,status:"Stable/Overpaid",img:"https://i.imgur.com/graxZJZ.png"},
+{name:"The Frozen One",val:"2.8M-3M",dem:7.0,status:"Decent",img:"https://i.imgur.com/WgXYQFf.png"},
+{name:"Forest Ball",val:"2.9M",dem:3.0,status:"Dropping",img:"https://i.imgur.com/Z8gFhVk.jpeg"},
+{name:"Shadow Prince",val:"2.2M-2.4M",dem:6.5,status:"Unstable",img:"https://i.imgur.com/kKvzaaq.png"},
+{name:"Omega Knight",val:"2.4M",dem:5.0,status:"Dropping",img:"https://i.imgur.com/EJlkeK2.png"},
+{name:"Mecha Ball",val:"1.5M-1.6M",dem:8.0,status:"Stable",img:"https://i.imgur.com/mjfcXRk.jpeg"}
+],shiny:[
+{name:"Void",val:"65M-70M",dem:10,status:"Stable",img:"https://i.imgur.com/5JHgs9x.png"},
+{name:"OmegaKnight (OMK)",val:"110M-115M",dem:10,status:"Stable",img:"https://i.imgur.com/3fcSd08.png"},
+{name:"TheFrozenOne (TFO)",val:"130M-140M",dem:10,status:"Stable",img:"https://i.imgur.com/YeqJzz2.jpeg"},
+{name:"Temple",val:"Owner Choice",dem:10,status:"Stable",img:"https://i.imgur.com/BbYRbYr.jpeg"},
+{name:"Forest",val:"Owner Choice",dem:10,status:"Unstable",img:"https://i.imgur.com/7QDOeeE.jpeg"},
+{name:"Golem",val:"Owner Choice",dem:10,status:"Stable",img:"https://i.imgur.com/NNPWHMS.png"},
+{name:"Overclocked Overlord",val:"Owner Choice",dem:10,status:"Stable",img:"https://i.imgur.com/btUklDn.jpeg"},
+{name:"Nightmare",val:"Owner Choice",dem:10,status:"Unknown",img:"https://i.imgur.com/khAWud4.png"}
+]},trans:{base:[
+{name:"ShowMan",val:"300k-500k",dem:7,status:"Stable",img:"https://i.imgur.com/8B6pZ8P.png"},
+{name:"Plasma Ball",val:"200k-300k",dem:5,status:"Average",img:"https://i.imgur.com/WpX9p2W.png"},
+{name:"LaserMiniGunner (LMG)",val:"190k-200k",dem:8.9,status:"Worth Buying",img:"https://i.imgur.com/5u9yXzG.png"},
+{name:"Scythe Master",val:"950k",dem:6,status:"Stable",img:"https://i.imgur.com/R3vD2k9.png"}
+],shiny:[
+{name:"Shiny ShowMan",val:"20M-25M",dem:9,status:"Stable",img:"https://i.imgur.com/8B6pZ8P.png"},
+{name:"Shiny LMG",val:"35M-40M",dem:10,status:"Stable",img:"https://i.imgur.com/5u9yXzG.png"}
+]}};
+function sClass(s){return 's-'+s.toLowerCase().replace(/[\/\s]/g,'')}
+function setTab(t){currentTab=t;playClick();document.getElementById('omegaTab').className='tab-btn'+(t==='omega'?' active':'');document.getElementById('transTab').className='tab-btn'+(t==='trans'?' active':'');refresh()}
+function refresh(){
+var shiny=document.getElementById('shinyToggle').checked,q=document.getElementById('searchInput').value.toLowerCase(),sort=document.getElementById('sortSelect').value,c=document.getElementById('unitContainer');
+c.innerHTML='';
+var src=shiny?units[currentTab].shiny:units[currentTab].base,filtered=src.filter(function(u){return u.name.toLowerCase().indexOf(q)!==-1});
+if(sort==='dem-high')filtered.sort(function(a,b){return b.dem-a.dem});
+else if(sort==='dem-low')filtered.sort(function(a,b){return a.dem-b.dem});
+else if(sort==='name')filtered.sort(function(a,b){return a.name.localeCompare(b.name)});
+if(!filtered.length){var e=document.createElement('div');e.className='empty';e.textContent='No units found';c.appendChild(e);return}
+filtered.forEach(function(u){
+var card=document.createElement('div');card.className='unit-card';
+var iw=document.createElement('div');iw.className='card-img-wrap';
+var img=document.createElement('img');img.alt=u.name;img.src=u.img;
+var ph=document.createElement('div');ph.className='img-placeholder';ph.textContent=u.name;
+img.onerror=function(){this.style.display='none';ph.style.display='flex'};
+iw.appendChild(img);iw.appendChild(ph);
+var body=document.createElement('div');body.className='card-body';
+var top=document.createElement('div');top.className='card-top';
+var nm=document.createElement('div');nm.className='unit-name';nm.textContent=u.name;
+var bdg=document.createElement('span');bdg.className='status-badge '+sClass(u.status);bdg.textContent=u.status;
+top.appendChild(nm);top.appendChild(bdg);
+var dl=document.createElement('div');dl.className='dem-label';dl.textContent='DEMAND';
+var dr=document.createElement('div');dr.className='dem-row';
+var tr=document.createElement('div');tr.className='dem-track';
+var fi=document.createElement('div');fi.className='dem-fill';fi.style.width=(u.dem*10)+'%';
+tr.appendChild(fi);
+var dn=document.createElement('span');dn.className='dem-num';dn.textContent=u.dem;
+dr.appendChild(tr);dr.appendChild(dn);
+var vr=document.createElement('div');vr.className='val-row';
+var gi=document.createElement('img');gi.className='gem';gi.src=GEM;gi.alt='gem';
+var vs=document.createElement('span');vs.className='val-text';vs.textContent=u.val;
+vr.appendChild(gi);vr.appendChild(vs);
+body.appendChild(top);body.appendChild(dl);body.appendChild(dr);body.appendChild(vr);
+card.appendChild(iw);card.appendChild(body);
+card.addEventListener('mouseenter',playHover);
+card.addEventListener('click',function(){playOpen();card.classList.remove('pop');void card.offsetWidth;card.classList.add('pop');openModal(u)});
+c.appendChild(card)});}
+function openModal(u){document.getElementById('mImg').src=u.img;document.getElementById('mName').textContent=u.name;document.getElementById('mVal').textContent=u.val;document.getElementById('mDemFill').style.width=(u.dem*10)+'%';document.getElementById('mDemNum').textContent=u.dem+' / 10';var ms=document.getElementById('mStatus');ms.textContent=u.status;ms.className='status-badge '+sClass(u.status);document.getElementById('detailsModal').style.display='flex'}
+function closeModal(e){if(e.target===document.getElementById('detailsModal'))closeModalDirect()}
+function closeModalDirect(){playClose();document.getElementById('detailsModal').style.display='none'}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModalDirect()});
+refresh();
+</script></body></html>
